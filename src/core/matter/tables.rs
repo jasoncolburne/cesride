@@ -6,11 +6,29 @@ pub(crate) const SMALL_VRZ_BYTES: u32 = 3;
 pub(crate) const LARGE_VRZ_BYTES: u32 = 6;
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct Sizage {
+pub struct Sizage {
     pub hs: u32,
     pub ss: u32,
     pub ls: u32,
     pub fs: u32,
+}
+
+pub trait MatterCodex {
+    fn code(variant: &Self) -> &'static str
+    where
+        Self: Sized;
+    fn sizage(s: &str) -> Result<Sizage>
+    where
+        Self: Sized;
+    fn hardage(c: char) -> Result<u32>
+    where
+        Self: Sized;
+    fn bardage(b: u8) -> Result<u32>
+    where
+        Self: Sized;
+    fn validate_verfer(code: &str) -> Result<()>
+    where
+        Self: Sized;
 }
 
 pub(crate) fn sizage(s: &str) -> Result<Sizage> {
@@ -90,6 +108,10 @@ pub(crate) fn bardage(b: u8) -> Result<u32> {
 #[allow(non_snake_case)]
 #[allow(non_upper_case_globals)]
 pub mod Codex {
+    use crate::core::matter::tables::MatterCodex;
+    use crate::error::Result;
+    use crate::matter::{bardage, hardage, sizage, Sizage};
+
     pub const Ed25519_Seed: &str = "A"; // Ed25519 256 bit random seed for private key
     pub const Ed25519N: &str = "B"; // Ed25519 verification key non-transferable, basic derivation.
     pub const X25519: &str = "C"; // X25519 public encryption key, converted from Ed25519 or Ed25519N.
@@ -136,6 +158,34 @@ pub mod Codex {
     pub const Bytes_Big_L0: &str = "7AAB"; // Byte String Big Leader Size 0
     pub const Bytes_Big_L1: &str = "8AAB"; // Byte String Big Leader Size 1
     pub const Bytes_Big_L2: &str = "9AAB"; // Byte String Big Leader Size 2
+
+    #[allow(non_camel_case_types)]
+    enum Enum {
+        Ed25519_Seed,
+    }
+
+    impl MatterCodex for Enum {
+        fn code(variant: &Self) -> &'static str {
+            match variant {
+                Enum::Ed25519_Seed => Ed25519_Seed,
+            }
+        }
+
+        fn sizage(s: &str) -> Result<Sizage> {
+            sizage(s)
+        }
+        fn hardage(c: char) -> Result<u32> {
+            hardage(c)
+        }
+
+        fn bardage(b: u8) -> Result<u32> {
+            bardage(b)
+        }
+
+        fn validate_verfer(code: &str) -> Result<()> {
+            Ok(())
+        }
+    }
 }
 
 #[cfg(test)]
