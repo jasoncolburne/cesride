@@ -15,7 +15,7 @@ base64 = "~0.22.1"
 blake2 = "~0.10.6"
 blake3 = "~1.5.1"
 chrono = { version = "~0.4.38", default-features = false, features = ["clock"] }
-ed25519-dalek = { version = "2.1.1", features = ["rand_core"] }
+ed25519-dalek = { git = "https://github.com/dalek-cryptography/curve25519-dalek", rev = "35e78b2", features = ["rand_core"] }
 indexmap = "~2.2.6"
 k256 = "~0.13.3"
 lazy_static = "~1.5.0"
